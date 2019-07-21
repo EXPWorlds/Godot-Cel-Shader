@@ -1,0 +1,80 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://Assets/Sphere/Sphere.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://Assets/Sphere/black_outline.material" type="Material" id=2]
+[ext_resource path="res://Assets/Sphere/sphere.material" type="Material" id=3]
+[ext_resource path="res://Scripts/rotate_mesh.gd" type="Script" id=4]
+[ext_resource path="res://Assets/Spree/Spree.obj" type="ArrayMesh" id=5]
+[ext_resource path="res://Assets/Spree/black_unshaded.material" type="Material" id=6]
+[ext_resource path="res://Assets/Spree/accent.material" type="Material" id=7]
+[ext_resource path="res://Assets/Spree/hair.material" type="Material" id=8]
+[ext_resource path="res://Assets/Spree/clothes.material" type="Material" id=9]
+[ext_resource path="res://Assets/Spree/iris_highlight_unshaded.material" type="Material" id=10]
+[ext_resource path="res://Assets/Spree/clavicle_unshaded.material" type="Material" id=11]
+[ext_resource path="res://Assets/Spree/iris_dark_unshaded.material" type="Material" id=12]
+[ext_resource path="res://Assets/Spree/iris_mid_unshaded.material" type="Material" id=13]
+[ext_resource path="res://Assets/Spree/iris_light_unshaded.material" type="Material" id=14]
+[ext_resource path="res://Assets/Spree/boots.material" type="Material" id=15]
+[ext_resource path="res://Assets/Spree/skin.material" type="Material" id=16]
+[ext_resource path="res://Assets/Spree/white_unshaded.material" type="Material" id=17]
+[ext_resource path="res://Assets/Spree/nose.material" type="Material" id=18]
+[ext_resource path="res://Assets/Spree/libs_unshaded.material" type="Material" id=19]
+[ext_resource path="res://Assets/Spree/bellybutton_unshaded.material" type="Material" id=20]
+[ext_resource path="res://Assets/Tree/Tree.obj" type="ArrayMesh" id=21]
+[ext_resource path="res://Assets/Tree/wood.material" type="Material" id=22]
+[ext_resource path="res://Assets/Tree/black_unshaded.material" type="Material" id=23]
+[ext_resource path="res://Assets/Tree/leaves.material" type="Material" id=24]
+
+[node name="Game" type="Spatial"]
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 3, 3, 3 )
+
+[node name="Sphere" type="MeshInstance" parent="."]
+mesh = ExtResource( 1 )
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 3 )
+script = ExtResource( 4 )
+
+[node name="Spree" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.825989, 0.0613232, 0.816535 )
+mesh = ExtResource( 5 )
+material/0 = ExtResource( 6 )
+material/1 = ExtResource( 7 )
+material/2 = ExtResource( 8 )
+material/3 = ExtResource( 9 )
+material/4 = ExtResource( 10 )
+material/5 = ExtResource( 11 )
+material/6 = ExtResource( 6 )
+material/7 = ExtResource( 6 )
+material/8 = ExtResource( 6 )
+material/9 = ExtResource( 12 )
+material/10 = ExtResource( 13 )
+material/11 = ExtResource( 14 )
+material/12 = ExtResource( 6 )
+material/13 = ExtResource( 15 )
+material/14 = ExtResource( 16 )
+material/15 = ExtResource( 17 )
+material/16 = ExtResource( 18 )
+material/17 = ExtResource( 19 )
+material/18 = null
+material/19 = null
+material/20 = ExtResource( 20 )
+script = ExtResource( 4 )
+
+[node name="Tree" type="MeshInstance" parent="."]
+transform = Transform( 0.958243, 0, 0.285956, 0, 1, 0, -0.285956, 0, 0.958243, -1.68146, -1, -0.605376 )
+mesh = ExtResource( 21 )
+material/0 = ExtResource( 22 )
+material/1 = ExtResource( 23 )
+material/2 = ExtResource( 24 )
+material/3 = ExtResource( 23 )
+material/4 = ExtResource( 23 )
+material/5 = ExtResource( 23 )
+material/6 = ExtResource( 24 )
+material/7 = ExtResource( 24 )
+script = ExtResource( 4 )
+
