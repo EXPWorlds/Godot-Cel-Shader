@@ -1,5 +1,5 @@
-##Godot Cel Shader v1.0.0
-#####By David Lipps aka Dave the Dev at EXPWorlds
+## Godot Cel Shader v1.0.0
+#### By David Lipps aka Dave the Dev at EXPWorlds
 ---
 ![Example Cel Shading Image](preview.png)
 ---
