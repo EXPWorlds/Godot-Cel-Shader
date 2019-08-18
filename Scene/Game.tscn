@@ -27,11 +27,8 @@
 
 [node name="Game" type="Spatial"]
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
-
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 3, 3, 3 )
+transform = Transform( 0.82765, -0.39686, 0.39686, 0, 0.707107, 0.707107, -0.561245, -0.585237, 0.585237, 3, 3, 3 )
 
 [node name="Sphere" type="MeshInstance" parent="."]
 mesh = ExtResource( 1 )
@@ -77,4 +74,7 @@ material/5 = ExtResource( 23 )
 material/6 = ExtResource( 24 )
 material/7 = ExtResource( 24 )
 script = ExtResource( 4 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
 
