@@ -44,7 +44,7 @@ Companion YouTube Tutorial (for version 1.0.0): [https://youtu.be/laastFVkTaA](h
 - The outlines were made using the inverted hull method in Blender and/or the included outline shader.
 - To use the outline shader in combination with the cel shader, place it in the next pass after the cel shader.
 - It is probably best to use only one directional light, or things will start to look odd. If you need many lights in your scene, make sure cel shaded objects are only affected by one directional light by means of groups and visual layers. 
-- A lot of the ideas behind the way this shader works was inspired by Junya C Motomura's 2015 GDC talk linked [here](https://www.youtube.com/watch?v=yhGjCzxJV3E&t=981s) and this article by RoyStan linked [here]().
+- A lot of the ideas behind the way this shader works was inspired by Junya C Motomura's 2015 GDC talk linked [here](https://www.youtube.com/watch?v=yhGjCzxJV3E&t=981s) and this article by RoyStan linked [here](https://roystan.net/articles/toon-shader.html).
 
 I can be reached at: davidlipps.dev@gmail.com
 I'd love to hear your thoughts. Especially about how I can improve. I'll do my best to get back to you.
