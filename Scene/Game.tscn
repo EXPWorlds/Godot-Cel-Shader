@@ -1,29 +1,231 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=31 format=2]
 
-[ext_resource path="res://Assets/Sphere/Sphere.obj" type="ArrayMesh" id=1]
-[ext_resource path="res://Assets/Sphere/black_outline.material" type="Material" id=2]
-[ext_resource path="res://Assets/Sphere/sphere.material" type="Material" id=3]
+[ext_resource path="res://Assets/Sphere/Sphere.mesh" type="ArrayMesh" id=1]
+[ext_resource path="res://Assets/Sphere/Base.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/rotate_mesh.gd" type="Script" id=4]
 [ext_resource path="res://Assets/Spree/Spree.obj" type="ArrayMesh" id=5]
 [ext_resource path="res://Assets/Spree/black_unshaded.material" type="Material" id=6]
-[ext_resource path="res://Assets/Spree/accent.material" type="Material" id=7]
-[ext_resource path="res://Assets/Spree/hair.material" type="Material" id=8]
-[ext_resource path="res://Assets/Spree/clothes.material" type="Material" id=9]
+[ext_resource path="res://Assets/Spree/hair.material" type="Material" id=7]
+[ext_resource path="res://Assets/TwistedTorus/TwistedTorus.mesh" type="ArrayMesh" id=8]
 [ext_resource path="res://Assets/Spree/iris_highlight_unshaded.material" type="Material" id=10]
 [ext_resource path="res://Assets/Spree/clavicle_unshaded.material" type="Material" id=11]
 [ext_resource path="res://Assets/Spree/iris_dark_unshaded.material" type="Material" id=12]
 [ext_resource path="res://Assets/Spree/iris_mid_unshaded.material" type="Material" id=13]
 [ext_resource path="res://Assets/Spree/iris_light_unshaded.material" type="Material" id=14]
-[ext_resource path="res://Assets/Spree/boots.material" type="Material" id=15]
-[ext_resource path="res://Assets/Spree/skin.material" type="Material" id=16]
 [ext_resource path="res://Assets/Spree/white_unshaded.material" type="Material" id=17]
-[ext_resource path="res://Assets/Spree/nose.material" type="Material" id=18]
 [ext_resource path="res://Assets/Spree/libs_unshaded.material" type="Material" id=19]
 [ext_resource path="res://Assets/Spree/bellybutton_unshaded.material" type="Material" id=20]
 [ext_resource path="res://Assets/Tree/Tree.obj" type="ArrayMesh" id=21]
 [ext_resource path="res://Assets/Tree/wood.material" type="Material" id=22]
 [ext_resource path="res://Assets/Tree/black_unshaded.material" type="Material" id=23]
-[ext_resource path="res://Assets/Tree/leaves.material" type="Material" id=24]
+[ext_resource path="res://Assets/Tree/leaf.material" type="Material" id=24]
+[ext_resource path="res://Assets/Sphere/Shade.png" type="Texture" id=25]
+[ext_resource path="res://Shaders/outline.shader" type="Shader" id=26]
+[ext_resource path="res://Assets/TwistedTorus/twistedtorus.material" type="Material" id=27]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 26 )
+shader_param/outline_thickness = 0.01
+shader_param/outline_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="Shader" id=2]
+code = "shader_type spatial;
+
+uniform bool use_shade = true;
+uniform bool use_specular = false;
+uniform bool use_rim = false;
+uniform bool use_light = false;
+uniform bool use_shadow = false;
+
+uniform vec4 base_color : hint_color = vec4(1.0);
+uniform vec4 shade_color : hint_color = vec4(1.0);
+uniform vec4 specular_tint : hint_color = vec4(0.75);
+uniform vec4 rim_tint : hint_color = vec4(0.75);
+
+uniform float shade_threshold : hint_range(-1.0, 1.0, 0.001) = 0.0;
+uniform float shade_softness : hint_range(0.0, 1.0, 0.001) = 0.01;
+
+uniform float specular_glossiness : hint_range(1.0, 100.0, 0.1) = 15.0;
+uniform float specular_threshold : hint_range(0.01, 1.0, 0.001) = 0.5;
+uniform float specular_softness : hint_range(0.0, 1.0, 0.001) = 0.1;
+
+uniform float rim_threshold : hint_range(0.00, 1.0, 0.001) = 0.25;
+uniform float rim_softness : hint_range(0.0, 1.0, 0.001) = 0.05;
+uniform float rim_spread : hint_range(0.0, 1.0, 0.001) = 0.5;
+
+uniform float shadow_threshold : hint_range(0.00, 1.0, 0.001) = 0.7;
+uniform float shadow_softness : hint_range(0.0, 1.0, 0.001) = 0.1;
+
+uniform sampler2D base_texture: hint_white;
+uniform sampler2D shade_texture: hint_white;
+
+void light()
+{
+	float NdotL = dot(NORMAL, LIGHT);
+	float is_lit = step(shade_threshold, NdotL);
+	vec3 base = texture(base_texture, UV).rgb * base_color.rgb;
+	vec3 shade = texture(shade_texture, UV).rgb * shade_color.rgb;
+	vec3 diffuse = base;
+	
+	if (use_shade)
+	{
+		float shade_value = smoothstep(shade_threshold - shade_softness ,shade_threshold + shade_softness, NdotL);
+		diffuse = mix(shade, base, shade_value);
+		
+		if (use_shadow)
+		{
+			float shadow_value = smoothstep(shadow_threshold - shadow_softness ,shadow_threshold + shadow_softness, ATTENUATION.r);
+			shade_value = min(shade_value, shadow_value);
+			diffuse = mix(shade, base, shade_value);
+			is_lit = step(shadow_threshold, shade_value);
+		}
+	}
+	
+	if (use_specular)
+	{
+		vec3 half = normalize(VIEW + LIGHT);
+		float NdotH = dot(NORMAL, half);
+		
+		float specular_value = pow(NdotH * is_lit, specular_glossiness * specular_glossiness);
+		specular_value = smoothstep(specular_threshold - specular_softness, specular_threshold + specular_softness, specular_value);
+		diffuse += specular_tint.rgb * specular_value;
+	}
+	
+	if (use_rim)
+	{
+		float iVdotN = 1.0 - dot(VIEW, NORMAL);
+		float inverted_rim_threshold = 1.0 - rim_threshold;
+		float inverted_rim_spread = 1.0 - rim_spread;
+		
+		float rim_value = iVdotN * pow(NdotL, inverted_rim_spread);
+		rim_value = smoothstep(inverted_rim_threshold - rim_softness, inverted_rim_threshold + rim_softness, rim_value);
+		diffuse += rim_tint.rgb * rim_value * is_lit;
+	}
+	
+	if (use_light)
+	{
+		diffuse *= LIGHT_COLOR;
+	}
+	
+	DIFFUSE_LIGHT = diffuse;
+}"
+
+[sub_resource type="ShaderMaterial" id=3]
+next_pass = SubResource( 1 )
+shader = SubResource( 2 )
+shader_param/use_shade = true
+shader_param/use_specular = true
+shader_param/use_rim = true
+shader_param/use_light = false
+shader_param/use_shadow = false
+shader_param/base_color = Color( 1, 1, 1, 1 )
+shader_param/shade_color = Color( 1, 1, 1, 1 )
+shader_param/specular_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/rim_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/shade_threshold = 0.0
+shader_param/shade_softness = 0.01
+shader_param/specular_glossiness = 15.0
+shader_param/specular_threshold = 0.5
+shader_param/specular_softness = 0.1
+shader_param/rim_threshold = 0.25
+shader_param/rim_softness = 0.05
+shader_param/rim_spread = 0.5
+shader_param/shadow_threshold = 0.7
+shader_param/shadow_softness = 0.1
+shader_param/base_texture = ExtResource( 3 )
+shader_param/shade_texture = ExtResource( 25 )
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 2 )
+shader_param/use_shade = true
+shader_param/use_specular = false
+shader_param/use_rim = false
+shader_param/use_light = false
+shader_param/use_shadow = false
+shader_param/base_color = Color( 0.964706, 0.760784, 0.972549, 1 )
+shader_param/shade_color = Color( 0.776471, 0.564706, 0.717647, 1 )
+shader_param/specular_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/rim_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/shade_threshold = 0.0
+shader_param/shade_softness = 0.01
+shader_param/specular_glossiness = 15.0
+shader_param/specular_threshold = 0.5
+shader_param/specular_softness = 0.1
+shader_param/rim_threshold = 0.25
+shader_param/rim_softness = 0.05
+shader_param/rim_spread = 0.5
+shader_param/shadow_threshold = 0.7
+shader_param/shadow_softness = 0.1
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = SubResource( 2 )
+shader_param/use_shade = true
+shader_param/use_specular = false
+shader_param/use_rim = false
+shader_param/use_light = false
+shader_param/use_shadow = false
+shader_param/base_color = Color( 0.556863, 0.827451, 0.960784, 1 )
+shader_param/shade_color = Color( 0.413086, 0.531059, 0.734375, 1 )
+shader_param/specular_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/rim_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/shade_threshold = 0.0
+shader_param/shade_softness = 0.01
+shader_param/specular_glossiness = 15.0
+shader_param/specular_threshold = 0.5
+shader_param/specular_softness = 0.1
+shader_param/rim_threshold = 0.25
+shader_param/rim_softness = 0.05
+shader_param/rim_spread = 0.5
+shader_param/shadow_threshold = 0.7
+shader_param/shadow_softness = 0.1
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 2 )
+shader_param/use_shade = true
+shader_param/use_specular = false
+shader_param/use_rim = false
+shader_param/use_light = false
+shader_param/use_shadow = false
+shader_param/base_color = Color( 0.972549, 0.647059, 0.141176, 1 )
+shader_param/shade_color = Color( 0.714844, 0.472146, 0.0949402, 1 )
+shader_param/specular_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/rim_tint = Color( 0.75, 0.75, 0.75, 0.75 )
+shader_param/shade_threshold = 0.0
+shader_param/shade_softness = 0.01
+shader_param/specular_glossiness = 15.0
+shader_param/specular_threshold = 0.5
+shader_param/specular_softness = 0.1
+shader_param/rim_threshold = 0.25
+shader_param/rim_softness = 0.05
+shader_param/rim_spread = 0.5
+shader_param/shadow_threshold = 0.7
+shader_param/shadow_softness = 0.1
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 2 )
+shader_param/use_shade = true
+shader_param/use_specular = true
+shader_param/use_rim = true
+shader_param/use_light = false
+shader_param/use_shadow = false
+shader_param/base_color = Color( 0.847059, 0.733333, 0.560784, 1 )
+shader_param/shade_color = Color( 0.675781, 0.532739, 0.406525, 1 )
+shader_param/specular_tint = Color( 0.333333, 0.333333, 0.333333, 0.74902 )
+shader_param/rim_tint = Color( 0.556863, 0.556863, 0.556863, 0.74902 )
+shader_param/shade_threshold = 0.0
+shader_param/shade_softness = 0.01
+shader_param/specular_glossiness = 15.0
+shader_param/specular_threshold = 0.5
+shader_param/specular_softness = 0.1
+shader_param/rim_threshold = 0.25
+shader_param/rim_softness = 0.05
+shader_param/rim_spread = 0.5
+shader_param/shadow_threshold = 0.7
+shader_param/shadow_softness = 0.1
+
+[sub_resource type="SpatialMaterial" id=8]
+flags_unshaded = true
+albedo_color = Color( 0.835294, 0.678431, 0.541176, 1 )
 
 [node name="Game" type="Spatial"]
 
@@ -31,18 +233,18 @@
 transform = Transform( 0.82765, -0.39686, 0.39686, 0, 0.707107, 0.707107, -0.561245, -0.585237, 0.585237, 3, 3, 3 )
 
 [node name="Sphere" type="MeshInstance" parent="."]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
 mesh = ExtResource( 1 )
-material/0 = ExtResource( 2 )
-material/1 = ExtResource( 3 )
+material/0 = SubResource( 3 )
 script = ExtResource( 4 )
 
 [node name="Spree" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.825989, 0.0613232, 0.816535 )
+transform = Transform( 0.994534, 0, 0.104407, 0, 1, 0, -0.104407, 0, 0.994534, 0.940223, 0, 0.782 )
 mesh = ExtResource( 5 )
 material/0 = ExtResource( 6 )
-material/1 = ExtResource( 7 )
-material/2 = ExtResource( 8 )
-material/3 = ExtResource( 9 )
+material/1 = SubResource( 4 )
+material/2 = ExtResource( 7 )
+material/3 = SubResource( 5 )
 material/4 = ExtResource( 10 )
 material/5 = ExtResource( 11 )
 material/6 = ExtResource( 6 )
@@ -52,10 +254,10 @@ material/9 = ExtResource( 12 )
 material/10 = ExtResource( 13 )
 material/11 = ExtResource( 14 )
 material/12 = ExtResource( 6 )
-material/13 = ExtResource( 15 )
-material/14 = ExtResource( 16 )
+material/13 = SubResource( 6 )
+material/14 = SubResource( 7 )
 material/15 = ExtResource( 17 )
-material/16 = ExtResource( 18 )
+material/16 = SubResource( 8 )
 material/17 = ExtResource( 19 )
 material/18 = null
 material/19 = null
@@ -63,7 +265,7 @@ material/20 = ExtResource( 20 )
 script = ExtResource( 4 )
 
 [node name="Tree" type="MeshInstance" parent="."]
-transform = Transform( 0.958243, 0, 0.285956, 0, 1, 0, -0.285956, 0, 0.958243, -1.68146, -1, -0.605376 )
+transform = Transform( 0.958243, 0, 0.285956, 0, 1, 0, -0.285956, 0, 0.958243, -2.17888, -1, -1.011 )
 mesh = ExtResource( 21 )
 material/0 = ExtResource( 22 )
 material/1 = ExtResource( 23 )
@@ -75,6 +277,11 @@ material/6 = ExtResource( 24 )
 material/7 = ExtResource( 24 )
 script = ExtResource( 4 )
 
+[node name="TwistedTorus" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, -0.0113999, 0 )
+mesh = ExtResource( 8 )
+material/0 = ExtResource( 27 )
+script = ExtResource( 4 )
+
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
-
