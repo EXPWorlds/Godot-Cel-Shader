@@ -2,6 +2,7 @@
 //v2.0.0 for Godot 3.2
 
 shader_type spatial;
+render_mode ambient_light_disabled;
 
 uniform bool use_shade = true;
 uniform bool use_specular = false;
@@ -28,8 +29,8 @@ uniform float rim_spread : hint_range(0.0, 1.0, 0.001) = 0.5;
 uniform float shadow_threshold : hint_range(0.00, 1.0, 0.001) = 0.7;
 uniform float shadow_softness : hint_range(0.0, 1.0, 0.001) = 0.1;
 
-uniform sampler2D base_texture: hint_white;
-uniform sampler2D shade_texture: hint_white;
+uniform sampler2D base_texture: hint_albedo;
+uniform sampler2D shade_texture: hint_albedo;
 
 void light()
 {

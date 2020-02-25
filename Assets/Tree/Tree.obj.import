@@ -15,4 +15,5 @@ dest_files=[ "res://.import/Tree.obj-9879db6840082e506b156f46f9c95d36.mesh", "re
 
 generate_tangents=true
 scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
 optimize_mesh=true
