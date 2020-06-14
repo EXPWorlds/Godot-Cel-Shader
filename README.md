@@ -9,15 +9,8 @@
 
 This is a demonstration project showcasing the included Cel Shader. All the assets were made by me, feel free to use them. Have fun!
 
-If this project helped you out, consider sending some coffee my way so I can stay locked in "the zone" and bring the Godot community more cool free stuff.
 
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_donations" />
-<input type="hidden" name="business" value="22E6SNKTLTHRL" />
-<input type="hidden" name="currency_code" value="USD" />
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-</form>
+ [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](davidlipps.e@gmail.com) If this project helped you out, consider sending some coffee my way so I can stay locked in "the zone" and bring the Godot community more cool free stuff.
 
 Companion YouTube Tutorial (for version 1.0.0): [https://youtu.be/laastFVkTaA](https://youtu.be/laastFVkTaA)
 
