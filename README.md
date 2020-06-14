@@ -10,7 +10,7 @@
 This is a demonstration project showcasing the included Cel Shader. All the assets were made by me, feel free to use them. Have fun!
 
 
- [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](davidlipps.e@gmail.com) If this project helped you out, consider sending some coffee my way so I can stay locked in "the zone" and bring the Godot community more cool free stuff.
+ [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=22E6SNKTLTHRL&currency_code=USD&source=url) If this project helped you out, consider sending some coffee my way so I can stay locked in "the zone" and bring the Godot community more cool free stuff.
 
 Companion YouTube Tutorial (for version 1.0.0): [https://youtu.be/laastFVkTaA](https://youtu.be/laastFVkTaA)
 
