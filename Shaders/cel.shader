@@ -36,10 +36,11 @@ void light()
 {
 	float NdotL = dot(NORMAL, LIGHT);
 	float is_lit = step(shade_threshold, NdotL);
-	vec3 base = texture(base_texture, UV).rgb * base_color.rgb;
-	vec3 shade = texture(shade_texture, UV).rgb * shade_color.rgb;
-	vec3 diffuse = base;
+	vec4 base = texture(base_texture, UV).rgba * base_color.rgba;
+	vec4 shade = texture(shade_texture, UV).rgba * shade_color.rgba;
+	vec4 diffuse = base;
 	
+
 	if (use_shade)
 	{
 		float shade_value = smoothstep(shade_threshold - shade_softness ,shade_threshold + shade_softness, NdotL);
@@ -61,7 +62,7 @@ void light()
 		
 		float specular_value = pow(NdotH * is_lit, specular_glossiness * specular_glossiness);
 		specular_value = smoothstep(specular_threshold - specular_softness, specular_threshold + specular_softness, specular_value);
-		diffuse += specular_tint.rgb * specular_value;
+		diffuse += specular_tint.rgba * specular_value;
 	}
 	
 	if (use_rim)
@@ -72,13 +73,14 @@ void light()
 		
 		float rim_value = iVdotN * pow(NdotL, inverted_rim_spread);
 		rim_value = smoothstep(inverted_rim_threshold - rim_softness, inverted_rim_threshold + rim_softness, rim_value);
-		diffuse += rim_tint.rgb * rim_value * is_lit;
+		diffuse += rim_tint.rgba * rim_value * is_lit;
 	}
 	
 	if (use_light)
 	{
-		diffuse *= LIGHT_COLOR;
+		diffuse *= vec4(LIGHT_COLOR, 1.0);
 	}
 	
-	DIFFUSE_LIGHT = diffuse;
+	DIFFUSE_LIGHT = diffuse.rgb;
+	ALPHA = diffuse.a;
 }
